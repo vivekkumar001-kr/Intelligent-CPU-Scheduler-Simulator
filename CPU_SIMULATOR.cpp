@@ -1,7 +1,7 @@
 #include <iostream>
+#include <iomanip>
+#include <vector>
+#include <queue>
+#include <algorithm>
+#include <climits>
 using namespace std;
-
-int main() {
-    cout << "CPU Simulator Started" << endl;
-    return 0;
-}
