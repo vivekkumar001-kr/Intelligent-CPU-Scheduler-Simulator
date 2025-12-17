@@ -28,4 +28,19 @@ void print results(const vector<Process> &procs , const vector<Gantt> &g){
          << setw(10) << "Finish"
          << setw(10) << "Waiting"
          << setw(12) << "Turnaround" << "\n";
+    wsum += p.waiting;
+    tsum += p.turnaround;
+    cout << string(70, '-') << "\n";
+    cout << "Average Waiting Time: " << wsum / procs.size() << "\n";
+    cout << "Average Turnaround Time: " << tsum / procs.size() << "\n";
+    
+}
+// Helper
+vector<Process> reset(const vector<Process>& p) {
+    vector<Process> r = p;
+    for (auto &x : r) {
+        x.start = x.finish = -1;
+        x.waiting = x.turnaround = 0;
+    }
+    return r;
 }
