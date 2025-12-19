@@ -189,3 +189,44 @@ void round_robin(vector<Process> orig, int q) {
 
     print_results(p, g);
 }
+
+// ========== MAIN ==========
+int main() {
+    cout << "================ CPU Scheduler Input Format ================\n\n";
+
+    int n;
+    cout << "Number of Processes: ";
+    cin >> n;
+
+    vector<Process> p(n);
+
+    cout << "\nProcess Details:\n";
+    cout << "PID  Arrival_Time  Burst_Time  Priority\n";
+
+    for (int i = 0; i < n; i++) {
+        cout << "Process " << i+1 << ": ";
+        cin >> p[i].pid >> p[i].arrival >> p[i].burst >> p[i].priority;
+    }
+
+    cout << "\nAlgorithm Choice:\n";
+    cout << "1 = FCFS\n2 = SJF\n3 = Round Robin\n4 = Priority\n";
+    cout << "Enter choice: ";
+    int c;
+    cin >> c;
+
+    int quantum = 0;
+    if (c == 3) {
+        cout << "Enter Time Quantum: ";
+        cin >> quantum;
+    }
+
+    cout << "\n================ Simulation Output ================\n";
+
+    if      (c == 1) fcfs(p);
+    else if (c == 2) sjf(p);
+    else if (c == 3) round_robin(p, quantum);
+    else if (c == 4) priority_scheduling(p);
+    else             cout << "Invalid choice!\n";
+
+    return 0;
+}
