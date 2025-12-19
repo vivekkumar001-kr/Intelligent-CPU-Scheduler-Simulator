@@ -102,3 +102,90 @@ void sjf(vector<Process> orig) {
 
     print_results(p, g);
 }
+
+// ========== PRIORITY ==========
+void priority_scheduling(vector<Process> orig) {
+    vector<Process> p = reset(orig);
+    int n = p.size();
+    vector<bool> done(n, false);
+
+    int time = 0, completed = 0;
+    vector<Gantt> g;
+
+    while (completed < n) {
+        int idx = -1, bp = INT_MAX;
+        for (int i = 0; i < n; i++) {
+            if (!done[i] && p[i].arrival <= time && p[i].priority < bp) {
+                bp = p[i].priority;
+                idx = i;
+            }
+        }
+
+        if (idx == -1) { time++; continue; }
+
+        p[idx].start = time;
+        time += p[idx].burst;
+        p[idx].finish = time;
+
+        p[idx].turnaround = p[idx].finish - p[idx].arrival;
+        p[idx].waiting    = p[idx].turnaround - p[idx].burst;
+
+g.push_back({p[idx].pid, p[idx].start, p[idx].finish});
+
+        done[idx] = true;
+        completed++;
+    }
+
+    print_results(p, g);
+}
+
+// ========== ROUND ROBIN ==========
+void round_robin(vector<Process> orig, int q) {
+    vector<Process> p = reset(orig);
+    int n = p.size();
+    vector<int> rem(n);
+
+    for (int i = 0; i < n; i++)
+        rem[i] = p[i].burst;
+
+    int time = 0, completed = 0;
+    queue<int> Q;
+    vector<Gantt> g;
+    vector<bool> added(n, false);
+
+    while (completed < n) {
+
+        // Add newly arrived processes
+        for (int i = 0; i < n; i++) {
+            if (!added[i] && p[i].arrival <= time) {
+                Q.push(i);
+                added[i] = true;
+            }
+        }
+
+        if (Q.empty()) { time++; continue; }
+
+        int idx = Q.front(); Q.pop();
+
+        if (p[idx].start == -1)
+            p[idx].start = time;
+
+        int run = min(q, rem[idx]);
+
+        g.push_back({p[idx].pid, time, time + run});
+
+        time += run;
+        rem[idx] -= run;
+
+        if (rem[idx] == 0) {
+            p[idx].finish = time;
+            p[idx].turnaround = p[idx].finish - p[idx].arrival;
+            p[idx].waiting = p[idx].turnaround - p[idx].burst;
+            completed++;
+        } else {
+            Q.push(idx);
+        }
+    }
+
+    print_results(p, g);
+}
