@@ -44,3 +44,61 @@ vector<Process> reset(const vector<Process>& p) {
     }
     return r;
 }
+// ========== FCFS ==========
+void fcfs(vector<Process> p) {
+    sort(p.begin(), p.end(), [](Process a, Process b){ return a.arrival < b.arrival; });
+
+    int time = 0;
+    vector<Gantt> g;
+
+    for (auto &x : p) {
+        if (time < x.arrival) {
+            g.push_back({0, time, x.arrival});
+            time = x.arrival;
+        }
+        x.start = time;
+        time += x.burst;
+        x.finish = time;
+        x.turnaround = x.finish - x.arrival;
+        x.waiting = x.turnaround - x.burst;
+
+        g.push_back({x.pid, x.start, x.finish});
+    }
+    print_results(p, g);
+}
+
+// ========== SJF ==========
+void sjf(vector<Process> orig) {
+    vector<Process> p = reset(orig);
+    int n = p.size();
+    vector<bool> done(n, false);
+
+    int time = 0, completed = 0;
+    vector<Gantt> g;
+
+    while (completed < n) {
+        int idx = -1, mb = INT_MAX;
+        for (int i = 0; i < n; i++) {
+            if (!done[i] && p[i].arrival <= time && p[i].burst < mb) {
+                mb = p[i].burst;
+                idx = i;
+            }
+        }
+
+        if (idx == -1) { time++; continue; }
+
+        p[idx].start = time;
+        time += p[idx].burst;
+        p[idx].finish = time;
+
+        p[idx].turnaround = p[idx].finish - p[idx].arrival;
+        p[idx].waiting    = p[idx].turnaround - p[idx].burst;
+
+        g.push_back({p[idx].pid, p[idx].start, p[idx].finish});
+
+        done[idx] = true;
+        completed++;
+    }
+
+    print_results(p, g);
+}
