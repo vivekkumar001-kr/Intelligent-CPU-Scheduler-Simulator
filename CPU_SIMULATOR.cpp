@@ -13,12 +13,13 @@ struct Process {
 struct Gantt {
     int pid, start, finish;
 };
-void print results(const vector<Process> &procs , const vector<Gantt> &g){
+void print_results(const vector<Process> &procs, const vector<Gantt> &g) {
     cout << "\nGantt Chart:\n";
     for (auto &s : g) {
         if (s.pid == 0) cout << "[idle:" << s.start << "->" << s.finish << "] ";
         else cout << "[P" << s.pid << ":" << s.start << "->" << s.finish << "] ";
     }
+
     cout << "\n\n---------------- CPU Scheduling Result Table ----------------\n";
     cout << left
          << setw(6) << "PID"
@@ -28,12 +29,27 @@ void print results(const vector<Process> &procs , const vector<Gantt> &g){
          << setw(10) << "Finish"
          << setw(10) << "Waiting"
          << setw(12) << "Turnaround" << "\n";
-    wsum += p.waiting;
-    tsum += p.turnaround;
+
+    cout << string(70, '-') << "\n";
+
+    double wsum = 0, tsum = 0;
+    for (auto &p : procs) {
+        cout << left
+             << setw(6) << p.pid
+             << setw(12) << p.arrival
+             << setw(10) << p.burst
+             << setw(10) << p.start
+             << setw(10) << p.finish
+             << setw(10) << p.waiting
+             << setw(12) << p.turnaround
+             << "\n";
+        wsum += p.waiting;
+        tsum += p.turnaround;
+    }
+
     cout << string(70, '-') << "\n";
     cout << "Average Waiting Time: " << wsum / procs.size() << "\n";
     cout << "Average Turnaround Time: " << tsum / procs.size() << "\n";
-    
 }
 // Helper
 vector<Process> reset(const vector<Process>& p) {
